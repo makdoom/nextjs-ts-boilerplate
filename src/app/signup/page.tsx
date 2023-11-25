@@ -1,9 +1,14 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
-import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Signup = () => {
+  const router = useRouter();
+  const [isSignupButtonDisabled, setIsSignupButtonDisabled] = useState(true);
   const [user, setuser] = useState({
     username: "",
     email: "",
@@ -15,7 +20,25 @@ const Signup = () => {
     setuser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const signupHandler = () => {};
+  const signupHandler = async () => {
+    try {
+      const response = await axios.post("/api/users/signup", { ...user });
+      console.log(response.data);
+      toast.success("Login successfully");
+      router.push("/login");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (user.username && user.email && user.password) {
+      setIsSignupButtonDisabled(false);
+    } else {
+      setIsSignupButtonDisabled(true);
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900">
@@ -28,6 +51,7 @@ const Signup = () => {
             id="username"
             value={user.username}
             type="text"
+            name="username"
             autoFocus
             placeholder="Username"
             required
@@ -39,6 +63,7 @@ const Signup = () => {
           <input
             id="email"
             type="email"
+            name="email"
             value={user.email}
             required
             placeholder="Email"
@@ -49,6 +74,7 @@ const Signup = () => {
         <div className="flex flex-col mb-5">
           <input
             id="password"
+            name="password"
             value={user.password}
             type="password"
             placeholder="Password"
@@ -58,8 +84,9 @@ const Signup = () => {
         </div>
 
         <button
+          disabled={isSignupButtonDisabled}
           onClick={signupHandler}
-          className="mt-5 w-full py-4 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ease-in duration-100"
+          className="mt-5 w-full py-4 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ease-in duration-100 disabled:bg-opacity-50 disabled:pointer-events-none"
         >
           Signup
         </button>
