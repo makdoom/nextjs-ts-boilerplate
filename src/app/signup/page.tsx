@@ -19,7 +19,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900">
-      <div className="flex flex-col m-4 p-4 md:p-8 w-full sm:w-[400px] rounded-md bg-gray-800">
+      <div className="flex flex-col mx-4 p-4 sm:p-8 w-full sm:max-w-[400px] rounded-md bg-gray-800">
         <h1 className="text-3xl mb-8 text-center font-semibold tracking-wide">
           Signup
         </h1>
@@ -28,6 +28,7 @@ const Signup = () => {
             id="username"
             value={user.username}
             type="text"
+            autoFocus
             placeholder="Username"
             required
             className="bg-gray-700 border border-gray-400 rounded-md py-4 px-3 text-sm w-full"
