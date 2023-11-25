@@ -1,9 +1,14 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
-import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const router = useRouter();
+  const [isSignupButtonDisabled, setIsSignupButtonDisabled] = useState(true);
   const [user, setuser] = useState({
     email: "",
     password: "",
@@ -14,7 +19,29 @@ const Login = () => {
     setuser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const LoginHandler = () => {};
+  const LoginHandler = async () => {
+    try {
+      const response = await axios.post("/api/users/login", { ...user });
+      console.log(response);
+      if (response.data.statusCode == 200) {
+        toast.success("Login successfull");
+        router.push("/profile");
+      } else {
+        toast.error(response.data.error);
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.data.error);
+    }
+  };
+
+  useEffect(() => {
+    if (user.email && user.password) {
+      setIsSignupButtonDisabled(false);
+    } else {
+      setIsSignupButtonDisabled(true);
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900">
@@ -26,6 +53,7 @@ const Login = () => {
           <input
             id="email"
             type="email"
+            name="email"
             autoFocus
             value={user.email}
             required
@@ -37,6 +65,7 @@ const Login = () => {
         <div className="flex flex-col mb-5">
           <input
             id="password"
+            name="password"
             value={user.password}
             type="password"
             placeholder="Password"
@@ -46,8 +75,9 @@ const Login = () => {
         </div>
 
         <button
+          disabled={isSignupButtonDisabled}
           onClick={LoginHandler}
-          className="mt-5 w-full py-4 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ease-in duration-100"
+          className="mt-5 w-full py-4 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ease-in duration-100 disabled:bg-opacity-50 disabled:pointer-events-none"
         >
           Login
         </button>
