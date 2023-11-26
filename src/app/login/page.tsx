@@ -27,11 +27,11 @@ const Login = () => {
         toast.success("Login successfull");
         router.push("/profile");
       } else {
-        toast.error(response.data.error);
+        toast.error(response.data.message);
       }
     } catch (error: any) {
       console.log(error);
-      toast.error(error.data.error);
+      toast.error(error.data.message);
     }
   };
 
